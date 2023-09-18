@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class Account {
+public class BankAccount {
 
     @Column(name = "customer_id")
     private long customerId;
