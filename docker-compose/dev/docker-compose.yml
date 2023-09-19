@@ -1,0 +1,62 @@
+---
+version: "3.8"
+services:
+  config-server:
+    image: afrid98/configserver:latest
+    ports:
+      - 8071:8071
+    networks:
+      - afridsekh
+  accounts:
+    image: afrid98/bank-accounts-1:latest
+    ports:
+      - 8080:8080
+    networks:
+      - afridsekh
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_SERVER: config-server:http://config-server:8071/
+  loans:
+    image: afrid98/loan-1:latest
+    ports:
+      - 8090:8090
+    networks:
+      - afridsekh
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 360s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_SERVER: config-server:http://config-server:8071/
+  cards:
+    image: afrid98/cards:latest
+    ports:
+      - 9000:9000
+    networks:
+      - afridsekh
+    depends_on:
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 360s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_SERVER: config-server:http://config-server:8071/
+networks:
+  afridsekh:
